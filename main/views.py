@@ -1,10 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from main.models import Movie, Rating
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
 
 def index(request):
     return render(request, 'index.html')
@@ -12,7 +11,7 @@ def index(request):
 @login_required
 def movies_page(request):
     user = request.user
-    rated_movies = Rating.objects.filter(user=user).select_related('movie')
+    rated_movies = Rating.objects.filter(user=user).select_related('movie').order_by('movie__title')
     rated_movie_ids = [rating.movie.id for rating in rated_movies]
     unrated_movies = Movie.objects.exclude(id__in=rated_movie_ids).order_by('title')
 
@@ -26,6 +25,9 @@ def movies_page(request):
         rating.save()
         movie.update_global_rating(new_rating=stars, old_rating=old_stars)
         messages.success(request, "Rating updated successfully.")
+        
+        # Redirect to the same page to ensure the form submission isn't repeated
+        return redirect('movies_page')
 
     context = {
         'rated_movies': rated_movies,
@@ -33,6 +35,16 @@ def movies_page(request):
     }
     return render(request, 'movies.html', context)
 
+@login_required
+def delete_rating(request, movie_id):
+    user = request.user
+    movie = get_object_or_404(Movie, id=movie_id)
+    rating = get_object_or_404(Rating, user=user, movie=movie)
+    old_stars = rating.personal_rating
+    rating.delete()  # Delete the rating
+    movie.update_global_rating(new_rating=0, old_rating=old_stars)  # Update the movie's global rating
+    messages.success(request, f"Your rating for '{movie.title}' has been deleted.")
+    return redirect('movies_page')  # Redirect to the movies page
 
 def login_view(request):
     if request.method == "POST":

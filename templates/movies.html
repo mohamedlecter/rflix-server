@@ -1,5 +1,3 @@
-<!-- templates/movies.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
@@ -11,7 +9,20 @@
       {% for rating in rated_movies %}
         <li>
           {{ rating.movie.title }} - Personal Rating: {{ rating.personal_rating }} - Global Rating: {{ rating.movie.rating }} 
+          <p>
+       
+          <form method="POST" action="{% url 'movies_page' %}">
+            {% csrf_token %}
+            <input type="hidden" name="movie_id" value="{{ rating.movie.id }}">
+            <label for="stars">Update Rating:</label>
+            <input type="number" name="stars" min="1" max="5" step="1" value="{{ rating.personal_rating }}" required>
+            <button type="submit">Update</button>
+          </form>
         </li>
+          <!-- Link to delete the rating -->
+          <a href="{% url 'delete_rating' rating.movie.id %}" onclick="return confirm('Are you sure you want to delete your rating for this movie?')">Delete Rating</a>
+        </p>
+
       {% endfor %}
     </ul>
   {% else %}
@@ -24,12 +35,11 @@
       {% for movie in unrated_movies %}
         <li>
           {{ movie.title }} - Global Rating: {{ movie.rating }}
-
           <form method="POST">
             {% csrf_token %}
             <input type="hidden" name="movie_id" value="{{ movie.id }}">
             <label for="stars">Rate:</label>
-            <input type="number" name="stars" min="0" max="5" step="1" required>
+            <input type="number" name="stars" min="1" max="5" step="1" required>
             <button type="submit">Rate</button>
           </form>
         </li>
