@@ -1,15 +1,41 @@
+<!-- templates/movies.html -->
+
 {% extends 'base.html' %}
 
 {% block content %}
-
   <h2>Movies</h2>
 
-  {% if movies %}
-    {% for m in movies %}
-      <p>{{ m.title }}</p>
-    {% endfor %}
+  <h3>Rated Movies</h3>
+  {% if rated_movies %}
+    <ul>
+      {% for rating in rated_movies %}
+        <li>
+          {{ rating.movie.title }} - Personal Rating: {{ rating.personal_rating }} - Global Rating: {{ rating.movie.rating }} 
+        </li>
+      {% endfor %}
+    </ul>
   {% else %}
-      <p>None</p>
+    <p>You have not rated any movies yet.</p>
   {% endif %}
 
+  <h3>Unrated Movies</h3>
+  {% if unrated_movies %}
+    <ul>
+      {% for movie in unrated_movies %}
+        <li>
+          {{ movie.title }} - Global Rating: {{ movie.rating }}
+
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="movie_id" value="{{ movie.id }}">
+            <label for="stars">Rate:</label>
+            <input type="number" name="stars" min="0" max="5" step="1" required>
+            <button type="submit">Rate</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>All movies have been rated.</p>
+  {% endif %}
 {% endblock %}
