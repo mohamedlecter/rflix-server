@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <h2>Movies</h2>
+
+  {% if movies %}
+    {% for m in movies %}
+      <p>{{ m.title }}</p>
+    {% endfor %}
+  {% else %}
+      <p>None</p>
+  {% endif %}
+
+{% endblock %}
