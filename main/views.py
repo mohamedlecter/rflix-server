@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import RatingForm, UserLoginForm, UserRegisterForm
+from collections import defaultdict
 
 def index(request):
     if not request.user.is_authenticated:
@@ -107,3 +108,58 @@ def profile(request):
         'email': email,
     }
     return render(request, 'profile.html', context)
+
+def recommendations(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    request.session.set_expiry(1800)  # Refresh session expiry on activity
+
+    # Get the user's liked movies
+    user = request.user
+    rated_movies = Rating.objects.filter(user=user).select_related('movie')
+    liked_movies = [rating.movie for rating in rated_movies if rating.personal_rating >= 3]
+    liked_movie_ids = [movie.id for movie in liked_movies]
+
+    # Get set of user's clan movies 
+    clan_users = set(
+            Rating.objects.filter(movie_id__in=liked_movie_ids, personal_rating__gte=3)
+            .exclude(user=user)
+            .values_list('user_id', flat=True)) 
+    
+    if clan_users: 
+        # Calculate clan ratings for movies not rated by the user
+        clan_ratings = defaultdict(list) # Dictionary to store clan ratings for each movie
+        clan_movie_ids = set() # Set to store movie ids rated by the clan
+
+        # Query the database for clan ratings for movies not rated by the user
+        clan_ratings_query = Rating.objects.filter(user_id__in=clan_users).exclude(movie_id__in=liked_movie_ids)
+        # Iterate over the query results and populate the clan_ratings dictionary
+        for rating in clan_ratings_query:
+            clan_ratings[rating.movie_id].append(rating.personal_rating)
+            clan_movie_ids.add(rating.movie_id)
+        # Calculate the average rating for each movie in the clan
+        clan_movie_avg_ratings = [
+            (movie_id, sum(ratings) / len(ratings))
+            for movie_id, ratings in clan_ratings.items()
+        ]
+        # Sort the clan_movie_avg_ratings list by average rating in descending order
+        clan_movie_avg_ratings.sort(key=lambda x: (-x[1], Movie.objects.get(id=x[0]).title))
+        recommended_movie_ids = [movie_id for movie_id, _ in clan_movie_avg_ratings[:5]]
+
+         # Fetch movie objects and their ratings
+        recommended_movies = Movie.objects.filter(id__in=recommended_movie_ids)
+        context = {
+            'recommendations': [
+                (movie.title, round(dict(clan_movie_avg_ratings)[movie.id], 3))
+                for movie in recommended_movies
+                ],
+                'is_global': False
+            }
+    else:
+            # No clan members found, recommend top 5 movies rated globally
+            top_movies = Movie.objects.exclude(id__in=liked_movie_ids).order_by('-rating')[:5]
+            context = {
+                'recommendations': [(movie.title, movie.rating) for movie in top_movies],
+                'is_global': True
+            }
+    return render(request, 'recommendations.html', context)

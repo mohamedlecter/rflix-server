@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Personalized Recommendations</h1>
+{% if is_global %}
+    <p>Based on global ratings:</p>
+{% else %}
+    <p>Based on your movie clan's preferences:</p>
+{% endif %}
+
+<ul>
+    {% for title, rating in recommendations %}
+        <li>{{ title }} - Rating: {{ rating }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
