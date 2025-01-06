@@ -1,0 +1,28 @@
+[
+    {"model": "auth.user", "pk": 8, "fields": {"username": "abubaker", "password": "pbkdf2_sha256$870000$2aKenOwrnoEYIwq7qWMAIT$ATK28mkvQDF6nIbFlfVdswnQjcCid93qEhZomCvpyB0=", "email": "abubaker@example.com", "is_staff": false, "is_superuser": false}},
+    {"model": "auth.user", "pk": 9, "fields": {"username": "mohamed", "password": "pbkdf2_sha256$870000$svyxhSk19trDEheMTmStHm$R5bb8JWajyLRFtbeeD+PF5aU3YqKV+5iXOrbCg2ug70=", "email": "mohamed@example.com", "is_staff": false, "is_superuser": false}},
+    {"model": "auth.user", "pk": 10, "fields": {"username": "sara", "password": "pbkdf2_sha256$870000$M3UIkyKeVnJx1RY3KH1NF1$WC1SvVFlix5TVVKOI8aF4xndDF2ZpyI8MOWJidlQGn4=", "email": "sara@example.com", "is_staff": false, "is_superuser": false}},
+
+
+    {"model": "main.rating", "pk": 1, "fields": {"user": 8, "movie": 1, "personal_rating": 5}},
+    {"model": "main.rating", "pk": 2, "fields": {"user": 8, "movie": 2, "personal_rating": 4}},
+    {"model": "main.rating", "pk": 3, "fields": {"user": 9, "movie": 1, "personal_rating": 4}},
+    {"model": "main.rating", "pk": 4, "fields": {"user": 9, "movie": 3, "personal_rating": 5}},
+    {"model": "main.rating", "pk": 5, "fields": {"user": 10, "movie": 2, "personal_rating": 3}},
+    {"model": "main.rating", "pk": 6, "fields": {"user": 9, "movie": 4, "personal_rating": 5}},
+    {"model": "main.rating", "pk": 7, "fields": {"user": 10, "movie": 4, "personal_rating": 4}},
+    {"model": "main.rating", "pk": 8, "fields": {"user": 8, "movie": 3, "personal_rating": 3}},
+    {"model": "main.rating", "pk": 9, "fields": {"user": 10, "movie": 1, "personal_rating": 5}},
+    {"model": "main.rating", "pk": 10, "fields": {"user": 8, "movie": 4, "personal_rating": 4}},
+    {"model": "main.rating", "pk": 11, "fields": {"user": 9, "movie": 2, "personal_rating": 4}},
+    {"model": "main.rating", "pk": 12, "fields": {"user": 10, "movie": 3, "personal_rating": 3}},
+    {"model": "main.rating", "pk": 13, "fields": {"user": 8, "movie": 5, "personal_rating": 5}},
+    {"model": "main.rating", "pk": 14, "fields": {"user": 9, "movie": 5, "personal_rating": 4}},
+    {"model": "main.rating", "pk": 15, "fields": {"user": 10, "movie": 5, "personal_rating": 3}},
+
+    {"model": "main.movieparty", "pk": 1, "fields": {"name": "Weekend Watch Party"}},
+    {"model": "main.movieparty_members", "pk": 1, "fields": {"movieparty_id": 1, "user_id": 8}},
+    {"model": "main.movieparty_members", "pk": 2, "fields": {"movieparty_id": 1, "user_id": 9}},
+    {"model": "main.movieparty_members", "pk": 3, "fields": {"movieparty_id": 1, "user_id": 10}}
+
+]

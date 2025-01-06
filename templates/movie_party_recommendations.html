@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Recommendations for {{ party.name }}</h1>
+<p>Total number of members: {{ party.member_count }} </p>
+
+{% if members_list %}
+    <h2>Members</h2>
+    <ul>
+        {% for member in members_list %}
+            <li>{{ member }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No members found.</p>
+{% endif %}
+
+
+
+{% if recommendations %}
+    <h2>Top 5 Movie Recommendations</h2>
+    <ul>
+        {% for recommendation in recommendations %}
+            <li>
+                <strong>{{ recommendation.movie.title }}</strong>
+                (Party Average Rating: {{ recommendation.average_rating|floatformat:2 }})
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No recommendations available for this party.</p>
+{% endif %}
+
+<a href="{% url 'parties' %}">Back to Movie Party Membership Page</a>
+{% endblock %}

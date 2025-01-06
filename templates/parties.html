@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Movie Party Membership</h1>
+
+<h2>Your Parties</h2>
+<ul>
+    {% for party in joined_parties %}
+        <li>
+            <a href="{% url 'movie_party_recommendations' party.id %}">{{ party.name }}</a>
+            ({{ party.member_count }} members)
+            <form method="POST" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="leave">
+                <input type="hidden" name="party_id" value="{{ party.id }}">
+                <button type="submit">Leave</button>
+            </form>
+        </li>
+    {% empty %}
+        <li>You have not joined any parties yet.</li>
+    {% endfor %}
+</ul>
+
+<h2>Other Parties</h2>
+<ul>
+    {% for party in other_parties %}
+        <li>
+            <a href="{% url 'movie_party_recommendations' party.id %}">{{ party.name }}</a>
+            ({{ party.member_count }} members)
+            {% if party.is_full %}
+                <span>(Full)</span>
+            {% else %}
+                <form method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="join">
+                    <input type="hidden" name="party_id" value="{{ party.id }}">
+                    <button type="submit">Join</button>
+                </form>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No other parties are available to join.</li>
+    {% endfor %}
+</ul>
+
+<h2>Create a New Party</h2>
+<form method="POST" action="{% url 'create_movie_party' %}">
+    {% csrf_token %}
+    <label for="party_name">Party Name:</label>
+    <input type="text" name="party_name" id="party_name" required>
+    <button type="submit">Create Party</button>
+</form>
+{% endblock %}

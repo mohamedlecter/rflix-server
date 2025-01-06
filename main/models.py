@@ -32,3 +32,18 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.movie.title} - {self.user.username}: {self.personal_rating}"
+class MovieParty(models.Model):
+    name = models.CharField(max_length=150, unique=True) 
+    members = models.ManyToManyField(User, related_name="movie_parties", blank=True)
+
+    def is_full(self):
+        """Checks if the party has reached its maximum capacity of 10 members."""
+        return self.members.count() >= 10
+
+    def member_count(self):
+        """Returns the current number of members in the party."""
+        return self.members.count()
+
+    def __str__(self):
+        """String representation of the MovieParty object."""
+        return self.name

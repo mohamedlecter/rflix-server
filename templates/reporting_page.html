@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>System-Wide Report</h1>
+
+<h2>Summary Statistics</h2>
+<ul>
+    <li>Total number of movies: {{ total_movies }}</li>
+    <li>Total number of registered users: {{ total_users }}</li>
+    <li>Total number of ratings: {{ total_ratings }}</li>
+    <li>Average number of ratings per movie: {{ avg_ratings_per_movie|floatformat:2 }}</li>
+    <li>Average number of ratings per user: {{ avg_ratings_per_user|floatformat:2 }}</li>
+    <li>Total number of parties: {{ total_parties }}</li>
+    <li>Average number of users per party: {{ avg_users_per_party|floatformat:2 }}</li>
+</ul>
+
+<h2>Avid Users</h2>
+{% if avid_users %}
+    <ol>
+        {% for user in avid_users %}
+            <li>{{ user.username }} ({{ user.num_ratings }} ratings)</li>
+        {% endfor %}
+    </ol>
+{% else %}
+    <p>No avid users found.</p>
+{% endif %}
+
+<h2>Popular Users</h2>
+{% if popular_users %}
+    <ol>
+        {% for user in popular_users %}
+            <li>{{ user.username }} ({{ user.num_parties }} party memberships)</li>
+        {% endfor %}
+    </ol>
+{% else %}
+    <p>No popular users found.</p>
+{% endif %}
+
+<a href="{% url 'index' %}">Back to Home</a>
+{% endblock %}
